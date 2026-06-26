@@ -1,0 +1,22 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="960"
+    android:viewportHeight="960"
+    android:tint="?attr/colorControlNormal">
+  <!-- Sparkle / AI stars -->
+  <path
+      android:fillColor="@android:color/white"
+      android:pathData="M200,520L160,440L80,400L160,360L200,280L240,360L320,400L240,440Z"/>
+  <path
+      android:fillColor="@android:color/white"
+      android:pathData="M760,280L720,200L640,160L720,120L760,40L800,120L880,160L800,200Z"/>
+  <path
+      android:fillColor="@android:color/white"
+      android:pathData="M760,880L720,800L640,760L720,720L760,640L800,720L880,760L800,800Z"/>
+  <!-- Wrench / fix symbol -->
+  <path
+      android:fillColor="@android:color/white"
+      android:pathData="M480,760Q380,760 310,690Q240,620 240,520Q240,440 286,374Q332,308 408,280L408,400L520,400L520,280Q596,308 638,374Q680,440 680,520Q680,620 610,690Q540,760 480,760ZM420,720L420,600L320,600Q346,660 400,690Q454,720 500,720Z"
+      android:fillType="evenOdd"/>
+</vector>
