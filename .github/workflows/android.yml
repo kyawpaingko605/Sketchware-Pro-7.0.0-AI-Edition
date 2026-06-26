@@ -71,7 +71,7 @@ jobs:
           SKETCHUB_API_KEY: ${{ secrets.SKETCHUB_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-        run: gradle assembleRelease
+        run: ./gradlew assembleRelease
 
       - name: Set short SHA
         id: set_sha
