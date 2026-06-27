@@ -34,14 +34,16 @@ android {
 
     signingConfigs {
         debug {
-            // GitHub Actions ရော Local မှာပါ လမ်းကြောင်းမှန်အောင် rootProject သုံးပြီး ပြင်ဆင်ထားသည်
-            def keystoreFile = rootProject.file("testkey.keystore")
-            if (keystoreFile.exists()) {
-                storeFile = keystoreFile
-            } else {
-                // အကယ်၍ ရှာမတွေ့ပါက app/src/main/resources/keys/testkey.keystore ထဲတွင် ထပ်မံရှာဖွေမည်
-                storeFile = file("src/main/resources/keys/testkey.keystore")
+            // GitHub Actions build တက်ချိန်တွင် ခေါ်ယူမည့် Keystore လမ်းကြောင်းအား အပြီးသတ်ပြင်ဆင်ထားသည်
+            def keystoreFile = rootProject.file("app/src/main/resources/keys/testkey.keystore")
+            if (!keystoreFile.exists()) {
+                keystoreFile = rootProject.file("testkey.keystore")
             }
+            if (!keystoreFile.exists()) {
+                keystoreFile = file("src/main/resources/keys/testkey.keystore")
+            }
+            
+            storeFile = keystoreFile
             storePassword = "testkey"
             keyAlias = "testkey"
             keyPassword = "testkey"
@@ -52,7 +54,6 @@ android {
         release {
             minifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            // Release build ကိုပါ အပေါ်က တည်ဆောက်ထားတဲ့ signingConfig နဲ့ ချိတ်ဆက်ပေးလိုက်သည်
             signingConfig = signingConfigs.debug
         }
     }
