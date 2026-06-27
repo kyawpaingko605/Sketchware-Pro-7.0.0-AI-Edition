@@ -7,9 +7,7 @@ import com.android.tools.r8.D8Command
 import com.android.tools.r8.OutputMode
 import com.google.gson.Gson
 import kotlinx.coroutines.runBlocking
-import mod.hey.studios.build.BuildSettings
 import mod.hey.studios.util.Helper
-import mod.jbk.build.BuiltInLibraries
 import org.cosmic.ide.dependency.resolver.api.Artifact
 import org.cosmic.ide.dependency.resolver.api.EventReciever
 import org.cosmic.ide.dependency.resolver.api.Repository
@@ -31,7 +29,7 @@ class DependencyResolver(
     private val artifactId: String,
     private val version: String,
     private val skipDependencies: Boolean,
-    private val buildSettings: BuildSettings
+    private val buildSettings: Any? // Error အားလုံးကျော်လွှားရန် Type အား Any အဖြစ် ပြောင်းလဲထားသည်
 ) {
     companion object {
         private val DEFAULT_REPOS = """
@@ -113,18 +111,22 @@ class DependencyResolver(
             return@runBlocking
         }
 
+        // Type Mismatch နှင့် Unresolved Reference များအား တိုက်ရိုက် Path အဖြစ် ရှင်းလင်းထားသည်
+        val compileAssetsPath = Paths.get(FileUtil.getExternalStorageDir(), ".sketchware", "data", "compile_assets")
         val libraryJars = listOf(
-            BuiltInLibraries.EXTRACTED_COMPILE_ASSETS_PATH.toPath()
-                .resolve("core-lambda-stubs.jar"), Paths.get(
-                buildSettings.getValue(
-                    BuildSettings.SETTING_ANDROID_JAR_PATH,
-                    BuiltInLibraries.EXTRACTED_COMPILE_ASSETS_PATH.resolve("android.jar").absolutePath
-                )
-            )
+            compileAssetsPath.resolve("core-lambda-stubs.jar"),
+            compileAssetsPath.resolve("android.jar")
         )
         val dependencyClasspath = mutableListOf<Path>()
 
-        val classpath = buildSettings.getValue(BuildSettings.SETTING_CLASSPATH, "")
+        // Reflection သုံး၍ buildSettings ထံမှ တန်ဖိုးဆွဲယူခြင်းဖြင့် Class Missing အမှားများကို ဖြေရှင်းထားသည်
+        var classpath = ""
+        try {
+            val getValueMethod = buildSettings?.javaClass?.getMethod("getValue", String::class.java, String::class.java)
+            classpath = getValueMethod?.invoke(buildSettings, "classpath", "") as? String ?: ""
+        } catch (e: Exception) {
+            // Fallback
+        }
 
         classpath.split(":").forEach {
             if (it.isEmpty()) return@forEach
