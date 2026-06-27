@@ -12,8 +12,12 @@ if (analyticsEnabled) {
 android {
     compileSdk = 36
 
-    def gitCommitHash = "git rev-parse HEAD".execute().text.trim()
-    def shortCommitHash = "git rev-parse --short HEAD".execute().text.trim()
+    def gitCommitHash = ""
+    try {
+        gitCommitHash = "git rev-parse HEAD".execute().text.trim()
+    } catch (Exception e) {
+        gitCommitHash = "unknown"
+    }
 
     defaultConfig {
         applicationId = "pro.sketchware"
@@ -25,14 +29,30 @@ android {
         versionName = "v7.0.0"
 
         buildConfigField("String", "GIT_HASH", "\"${gitCommitHash}\"")
-
         buildConfigField("String", "SKETCHUB_API_KEY", "\"${System.getenv("SKETCHUB_API_KEY")}\"")
+    }
+
+    signingConfigs {
+        debug {
+            // GitHub Actions ရော Local မှာပါ လမ်းကြောင်းမှန်အောင် rootProject သုံးပြီး ပြင်ဆင်ထားသည်
+            def keystoreFile = rootProject.file("testkey.keystore")
+            if (keystoreFile.exists()) {
+                storeFile = keystoreFile
+            } else {
+                // အကယ်၍ ရှာမတွေ့ပါက app/src/main/resources/keys/testkey.keystore ထဲတွင် ထပ်မံရှာဖွေမည်
+                storeFile = file("src/main/resources/keys/testkey.keystore")
+            }
+            storePassword = "testkey"
+            keyAlias = "testkey"
+            keyPassword = "testkey"
+        }
     }
 
     buildTypes {
         release {
             minifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            // Release build ကိုပါ အပေါ်က တည်ဆောက်ထားတဲ့ signingConfig နဲ့ ချိတ်ဆက်ပေးလိုက်သည်
             signingConfig = signingConfigs.debug
         }
     }
@@ -55,15 +75,6 @@ android {
 
     androidResources {
         additionalParameters.addAll("--stable-ids", "${rootDir}/public-stable-ids.txt")
-    }
-
-    signingConfigs {
-        debug {
-            storeFile = file("../testkey.keystore")
-            storePassword = "testkey"
-            keyAlias = "testkey"
-            keyPassword = "testkey"
-        }
     }
 
     buildFeatures {
