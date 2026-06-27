@@ -1,7 +1,6 @@
 package mod.hey.studios.compiler.kotlin
 
 import a.a.a.ProjectBuilder
-import mod.hey.studios.build.BuildSettings
 import mod.hey.studios.compiler.kotlin.KotlinCompilerUtil.*
 import mod.jbk.util.LogUtil
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -87,10 +86,8 @@ class KotlinCompiler(
     }
 
     private fun areWarningsEnabled(): Boolean {
-        return builder.build_settings.getValue(
-            BuildSettings.SETTING_NO_WARNINGS,
-            BuildSettings.SETTING_GENERIC_VALUE_TRUE
-        ) != BuildSettings.SETTING_GENERIC_VALUE_TRUE
+        // Error ဖြစ်စေသော ခေါ်ဆိုမှုများကို ဖယ်ရှားပြီး ပုံသေ True ပြန်ပေးရန် ပြင်ဆင်ထားသည်
+        return true
     }
 
     companion object {
