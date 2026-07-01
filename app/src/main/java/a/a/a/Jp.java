@@ -17,7 +17,11 @@ public class Jp {
     public Jp(String libraryName) {
         name = libraryName;
         hasResources = BuiltInLibraryUtils.hasResources(libraryName);
-        hasAssets = libraryName.equals(BuiltInLibraries.CODEVIEW);
+        // BuiltInLibraries.CODEVIEW ကို တိုက်ရိုက်မသုံးဘဲ string literal သုံးပါ
+        hasAssets = BuiltInLibraryUtils.hasAssets(libraryName); // ဒီ method ကိုသုံးပါ
+        // ဒါမှမဟုတ်
+        // hasAssets = libraryName.equals("codeview") || libraryName.equals("lottie");
+        
         if (hasResources || hasAssets) {
             packageName = BuiltInLibraryUtils.getPackageName(libraryName);
         } else {
